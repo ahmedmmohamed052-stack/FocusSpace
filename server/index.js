@@ -17,7 +17,17 @@ const subscriptionRoutes = require("./routes/subscription");
 const app = express();
 
 app.set("trust proxy", 1);
-app.use(helmet({ contentSecurityPolicy: false }));
+app.use(
+  helmet({
+    contentSecurityPolicy: false,
+    // Helmet's default Cross-Origin-Opener-Policy ("same-origin") blocks
+    // the popup window Firebase's signInWithPopup opens for Google
+    // sign-in from talking back to this tab — the popup finishes, then
+    // silently closes with no result. "unsafe-none" is what Firebase's
+    // own hosting preset uses for this exact reason.
+    crossOriginOpenerPolicy: { policy: "unsafe-none" },
+  })
+);
 app.use(
   cors({
     origin: (process.env.ALLOWED_ORIGINS || "").split(",").filter(Boolean),
