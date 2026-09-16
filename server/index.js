@@ -13,6 +13,7 @@ const { generalLimiter } = require("./middleware/rateLimiters");
 const plansRoutes = require("./routes/plans");
 const paymentRoutes = require("./routes/payment");
 const subscriptionRoutes = require("./routes/subscription");
+const leaderboardJob = require("./jobs/leaderboard");
 
 const app = express();
 
@@ -55,4 +56,7 @@ app.use((err, req, res, next) => {
 });
 
 const PORT = process.env.PORT || 3000;
-app.listen(PORT, () => console.log(`Server running on port ${PORT}`));
+app.listen(PORT, () => {
+  console.log(`Server running on port ${PORT}`);
+  leaderboardJob.start();
+});

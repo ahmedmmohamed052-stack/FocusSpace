@@ -981,6 +981,22 @@
       const scColor=sc>=80?P:sc>=60?AM:PK;
       const scColor2=sc>=80?PK:sc>=60?"#FFB800":P;
       const R=60, C2=2*Math.PI*R;
+      const savedRef=useRef(false);
+
+      useEffect(()=>{
+        if(savedRef.current) return;
+        savedRef.current=true;
+        window.FS.recordSessionResult?.({
+          field: data.field || null,
+          sub: data.sub || null,
+          score: sc,
+          tasksDone: done,
+          tasksTotal: finalTasks.length,
+          actualMinutes: Math.round(actual),
+          plannedMinutes: Math.round(plan.work),
+          tasks: finalTasks.map(t=>({name:t.name,dur:t.dur,done:!!t.done})),
+        }).catch(e=>console.error("[session save]",e.message));
+      },[]);
 
       return(
         <div style={PAGE} className="page-anim"><div style={INNER}>

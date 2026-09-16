@@ -322,6 +322,8 @@
     }
     .stat-label { font-size: 11px; font-weight: 700; color: var(--color-text-tertiary); letter-spacing: 0.08em; text-transform: uppercase; margin-bottom: 4px; }
     .stat-value { font-size: 20px; font-weight: 800; font-family: var(--font-display); color: var(--color-text-primary); letter-spacing: -0.02em; }
+    .stat-card-clickable { cursor: pointer; border: 1px solid rgba(255,255,255,0.96); font-family: var(--font-sans); transition: all 0.2s; width: 100%; }
+    .stat-card-clickable:hover { transform: translateY(-2px); box-shadow: 0 8px 28px rgba(111,66,255,0.14); border-color: rgba(155,138,255,0.5); }
 
     /* ── Welcome banner ── */
     .welcome-banner {
@@ -509,6 +511,17 @@
        HOME TAB
     ══════════════════════════════════════════ */
     function HomeTab({ onFocusSpaceClick, checkingAccess, user }) {
+      const [stats, setStats] = useState(null);
+
+      useEffect(() => {
+        window.FS.getUserStats?.()
+          .then(setStats)
+          .catch(e => { console.error("[stats] failed:", e.message); setStats({}); });
+      }, []);
+
+      const totalScore = stats?.totalScore ?? 0;
+      const streak = stats?.currentStreak ?? 0;
+
       return (
         <div className="page-content anim-fade-up">
           {/* Welcome banner */}
@@ -518,6 +531,20 @@
               <div className="welcome-greeting">Good to see you 👋</div>
               <div className="welcome-name">{user?.displayName || "Ready when you are"}</div>
             </div>
+          </div>
+
+          {/* Score / Streak cards */}
+          <div className="stats-row" style={{gridTemplateColumns:"1fr 1fr"}}>
+            <button className="stat-card stat-card-clickable" onClick={()=>window.location.href="scores.html"} aria-label="View your session history">
+              <div className="stat-icon" style={{background:"#EDE8FF"}}><i className="ti ti-star-filled" style={{color:"#6F42FF"}} aria-hidden="true"/></div>
+              <div className="stat-label">Total Score</div>
+              <div className="stat-value">{stats===null ? "…" : totalScore.toLocaleString()}</div>
+            </button>
+            <button className="stat-card stat-card-clickable" onClick={()=>window.location.href="leaderboard.html"} aria-label="View the leaderboard">
+              <div className="stat-icon" style={{background:"#FFF0D6"}}><i className="ti ti-flame" style={{color:"#FF9500"}} aria-hidden="true"/></div>
+              <div className="stat-label">Day Streak</div>
+              <div className="stat-value">{stats===null ? "…" : streak}</div>
+            </button>
           </div>
 
           {/* Big Focus Space card */}

@@ -27,6 +27,13 @@ import {
   doc,
   getDoc,
   setDoc,
+  addDoc,
+  collection,
+  query,
+  orderBy,
+  limit,
+  getDocs,
+  runTransaction,
   serverTimestamp,
 } from "https://www.gstatic.com/firebasejs/10.13.0/firebase-firestore.js";
 
@@ -62,8 +69,91 @@ export {
   doc,
   getDoc,
   setDoc,
+  addDoc,
+  collection,
+  query,
+  orderBy,
+  limit,
+  getDocs,
+  runTransaction,
   serverTimestamp,
 };
+
+/** UTC calendar date as YYYY-MM-DD — used for streaks so "day" means the
+ * same thing regardless of the user's/server's local timezone. */
+function utcDateString(d = new Date()) {
+  return d.toISOString().slice(0, 10);
+}
+function utcDateStringMinusDays(dateStr, days) {
+  const d = new Date(dateStr + "T00:00:00Z");
+  d.setUTCDate(d.getUTCDate() - days);
+  return utcDateString(d);
+}
+
+/**
+ * Saves a completed focus session to users/{uid}/sessions (immutable
+ * history — Firestore rules forbid editing/deleting it after creation)
+ * and, in the same transaction, updates the user's totalScore and
+ * daily streak.
+ *
+ * Streak logic: a "day" is UTC-calendar-day based. Finishing another
+ * session on a day you already logged one today doesn't change the
+ * streak; finishing one on the very next day extends it by 1; any
+ * bigger gap resets it to 1.
+ *
+ * NOTE ON TRUST: session score/duration/tasks are computed client-side
+ * by the timer UI (the whole session flow already is, with no server
+ * verification of elapsed time) — Firestore rules bound the values to
+ * plausible ranges but can't fully prevent a determined user from
+ * inflating their own history. Good enough to stop casual abuse; not
+ * cryptographically tamper-proof. A fully tamper-proof version would
+ * need the timer itself to be server-authoritative.
+ */
+export async function recordSessionResult(user, session) {
+  const userRef = doc(db, "users", user.uid);
+  const sessionRef = doc(collection(db, "users", user.uid, "sessions"));
+
+  const today = utcDateString();
+  const yesterday = utcDateStringMinusDays(today, 1);
+
+  await runTransaction(db, async (tx) => {
+    const userSnap = await tx.get(userRef);
+    const prev = userSnap.exists() ? userSnap.data() : {};
+
+    const prevScore = typeof prev.totalScore === "number" ? prev.totalScore : 0;
+    const prevStreak = typeof prev.currentStreak === "number" ? prev.currentStreak : 0;
+    const prevLongest = typeof prev.longestStreak === "number" ? prev.longestStreak : 0;
+    const prevDate = prev.lastSessionDate || null;
+
+    let newStreak;
+    if (prevDate === today) newStreak = prevStreak; // already logged today
+    else if (prevDate === yesterday) newStreak = prevStreak + 1; // consecutive day
+    else newStreak = 1; // gap, or very first session
+
+    tx.set(
+      userRef,
+      {
+        totalScore: prevScore + session.score,
+        currentStreak: newStreak,
+        longestStreak: Math.max(prevLongest, newStreak),
+        lastSessionDate: today,
+      },
+      { merge: true }
+    );
+
+    tx.set(sessionRef, {
+      field: session.field || "General",
+      sub: session.sub || "General",
+      score: session.score,
+      tasksDone: session.tasksDone,
+      tasksTotal: session.tasksTotal,
+      actualMinutes: session.actualMinutes,
+      plannedMinutes: session.plannedMinutes,
+      tasks: session.tasks || [],
+      createdAt: serverTimestamp(),
+    });
+  });
+}
 
 /** True if this user's identity is considered verified (Google is
  * pre-verified by Google; email/password needs the emailVerified flag). */
