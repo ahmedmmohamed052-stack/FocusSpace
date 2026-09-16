@@ -4,7 +4,7 @@
   <meta charset="UTF-8"/>
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>FocusSpace — Home</title>
-  <meta name="description" content="Welcome to FocusSpace. Access your focus workspace, learn about us, and find our branches."/>
+  <meta name="description" content="Welcome to FocusSpace. Access your focus workspace."/>
 
   <!-- Google Fonts -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -355,58 +355,6 @@
       white-space: nowrap; flex-shrink: 0;
     }
 
-    /* ── About Us / Branches placeholder ── */
-    .empty-tab-container {
-      display: flex; flex-direction: column; align-items: center; justify-content: center;
-      min-height: 400px; text-align: center;
-      padding: 40px;
-    }
-    .empty-tab-icon-wrap {
-      width: 80px; height: 80px; border-radius: 24px;
-      display: flex; align-items: center; justify-content: center;
-      font-size: 38px; margin: 0 auto 22px;
-    }
-    .empty-tab-title {
-      font-size: 26px; font-weight: 800; letter-spacing: -0.02em;
-      margin-bottom: 10px;
-    }
-    .empty-tab-desc {
-      font-size: 15px; color: var(--color-text-secondary);
-      font-weight: 500; line-height: 1.6; max-width: 340px;
-    }
-    .coming-soon-badge {
-      display: inline-flex; align-items: center; gap: 6px;
-      background: linear-gradient(135deg,#FFF0D6,#FFE5B4);
-      border: 1px solid rgba(255,149,0,0.25);
-      border-radius: 100px; padding: 6px 16px;
-      font-size: 12px; font-weight: 700; color: #7A4400;
-      letter-spacing: 0.04em; text-transform: uppercase;
-      margin-bottom: 24px;
-    }
-
-    /* ── Branches placeholder ── */
-    .branches-grid {
-      display: grid; grid-template-columns: 1fr 1fr; gap: 16px;
-    }
-    .branch-placeholder {
-      background: rgba(255,255,255,0.88);
-      border-radius: 18px;
-      border: 1.5px dashed rgba(190,175,230,0.6);
-      padding: 28px 20px;
-      display: flex; flex-direction: column; align-items: center;
-      justify-content: center; text-align: center; gap: 10px;
-      min-height: 160px;
-    }
-    .branch-placeholder-icon {
-      width: 48px; height: 48px; border-radius: 14px;
-      background: var(--color-background-secondary);
-      display: flex; align-items: center; justify-content: center;
-      font-size: 22px; color: var(--color-text-tertiary);
-    }
-    .branch-placeholder-label {
-      font-size: 13px; font-weight: 600; color: var(--color-text-tertiary);
-    }
-
     /* ── Input & Button shared ── */
     .inp {
       width: 100%; padding: 13px 16px;
@@ -461,7 +409,7 @@
       .focus-hero-title { font-size: 28px; }
       .stats-row { grid-template-columns: 1fr 1fr; }
       .stats-row .stat-card:last-child { grid-column: span 2; }
-      .branches-grid { grid-template-columns: 1fr; }
+
       .nav-tabs { gap: 2px; }
       .nav-tab { padding: 8px 13px; font-size: 13px; }
       .navbar { padding: 0 16px; }
@@ -511,8 +459,6 @@
     function Navbar({ activeTab, onTabChange, user, onLogout }) {
       const tabs = [
         { id: "home",     label: "Home",      icon: "ti-home-2" },
-        { id: "about",    label: "About Us",  icon: "ti-info-circle" },
-        { id: "branches", label: "Branches",  icon: "ti-map-pin" },
       ];
 
       return (
@@ -613,96 +559,6 @@
     }
 
     /* ══════════════════════════════════════════
-       ABOUT US TAB  (ready to fill)
-    ══════════════════════════════════════════ */
-    function AboutTab() {
-      return (
-        <div className="page-content anim-scale-pop">
-          <div className="empty-tab-container">
-            <div className="coming-soon-badge">
-              <i className="ti ti-sparkles" style={{fontSize:13}} aria-hidden="true"/>
-              Coming Soon
-            </div>
-            <div className="empty-tab-icon-wrap" style={{background:"linear-gradient(135deg,#EDE8FF,#DDD4FF)"}}>
-              <i className="ti ti-users" style={{color:"#6F42FF"}} aria-hidden="true"/>
-            </div>
-            <h1 className="empty-tab-title">About Us</h1>
-            <p className="empty-tab-desc">
-              This section is being prepared. Come back soon to learn more about our story, our mission, and the team behind FocusSpace.
-            </p>
-          </div>
-
-          {/*
-            ─────────────────────────────────────────────────────────────
-            READY TO FILL — Add your content below this comment.
-            Suggested structure:
-              <section> Mission statement </section>
-              <section> Team members grid </section>
-              <section> Story / timeline </section>
-            ─────────────────────────────────────────────────────────────
-          */}
-        </div>
-      );
-    }
-
-    /* ══════════════════════════════════════════
-       BRANCHES TAB  (ready to fill)
-    ══════════════════════════════════════════ */
-    function BranchesTab() {
-      /*
-        ─────────────────────────────────────────────────────────────
-        READY TO FILL — Replace placeholder cards with real branch data.
-        Each branch card should contain:
-          - Branch photo  (<img src="..." alt="Branch Name"/>)
-          - Branch name   (<h3>Branch Name</h3>)
-          - Address       (<p>Address</p>)
-          - Google Maps link:
-              <a href="https://maps.google.com/?q=YOUR_LOCATION" target="_blank">
-                View on Map
-              </a>
-        ─────────────────────────────────────────────────────────────
-      */
-      const placeholderBranches = [
-        { id:1, label:"Branch 1" },
-        { id:2, label:"Branch 2" },
-        { id:3, label:"Branch 3" },
-        { id:4, label:"Branch 4" },
-      ];
-
-      return (
-        <div className="page-content anim-scale-pop">
-          <div style={{marginBottom:28}}>
-            <div className="coming-soon-badge" style={{marginBottom:16}}>
-              <i className="ti ti-map-pin" style={{fontSize:13}} aria-hidden="true"/>
-              Coming Soon
-            </div>
-            <h1 style={{fontSize:28,fontWeight:800,letterSpacing:"-0.03em",marginBottom:8,fontFamily:"var(--font-display)"}}>Our Branches</h1>
-            <p style={{color:"var(--color-text-secondary)",fontSize:14,fontWeight:500,lineHeight:1.6}}>
-              Find a FocusSpace location near you. Photos and map links coming soon.
-            </p>
-          </div>
-
-          <div className="branches-grid">
-            {placeholderBranches.map(b => (
-              <div key={b.id} className="branch-placeholder">
-                {/* Photo placeholder */}
-                <div className="branch-placeholder-icon">
-                  <i className="ti ti-photo" aria-hidden="true"/>
-                </div>
-                <div className="branch-placeholder-label">{b.label}</div>
-                {/* Map link placeholder */}
-                <div style={{display:"flex",alignItems:"center",gap:5,fontSize:12,color:"var(--color-text-tertiary)",fontWeight:500}}>
-                  <i className="ti ti-map-2" style={{fontSize:13}} aria-hidden="true"/>
-                  Map link coming soon
-                </div>
-              </div>
-            ))}
-          </div>
-        </div>
-      );
-    }
-
-    /* ══════════════════════════════════════════
        MAIN APP
     ══════════════════════════════════════════ */
     function App() {
@@ -737,8 +593,6 @@
             await checkSubscriptionAndRoute();
             setCheckingAccess(false);
           }}/>}
-          {tab === "about"    && <AboutTab/>}
-          {tab === "branches" && <BranchesTab/>}
         </>
       );
     }
